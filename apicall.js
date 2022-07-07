@@ -37,7 +37,7 @@ var getScriptPromisify = (src) => {
 	
 
 			myChart.showLoading();
-			$.get('https://1234mytestbucket1234.s3.amazonaws.com/R0568A.json', function (data) {
+			$.get('https://raw.githubusercontent.com/rajesh01234/test/main/R0568A.json', function (data) {
 				myChart.hideLoading();
 
 
