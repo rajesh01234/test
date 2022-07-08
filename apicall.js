@@ -1,48 +1,65 @@
-{
-  "eula": "",
-  "vendor": "SAP",
-  "license": "",
-  "id": "com.sap.sac.sample.apicall",
-  "version": "2.0.0",
-  "name": "REST API Call",
-  "newInstancePrefix": "APICall",
-  "description": "Custom widget to call Rest API",
-  "webcomponents": [
-    {
-      "kind": "main",
-      "tag": "com-sap-sample-apicall",
-      "url": "http://localhost:8080/apicall/apicall.js", 
-      "integrity": "",
-      "ignoreIntegrity": true
-    }
-  ],
-  "properties": {
-		"width": {
-			"type": "integer",
-			"default": 600
-		},
-		"height": {
-			"type": "integer",
-			"default": 420
-		}
-  },
-  "methods": {
-	  "render": {
-			  "description": "Render",
-			  "parameters": [
-				  {
-					  "name": "searchValue",
-					  "type": "string",            
-					  "description": "Enter BOM Search value"
-				  },
-          {
-					  "name": "expandTree",
-					  "type": "boolean",            
-					  "description": "Enter True if tree to expand"
-          }
-			  ]
-		  }
-  },
-  "events": {
-  }
+var getScriptPromisify = (src) => {
+  return new Promise(resolve => {
+    $.getScript(src, resolve)
+  })
 }
+
+(function () {
+  const bom = document.createElement('template')
+  bom.innerHTML = `
+      <style>
+      </style>
+      <div id="root" style="width: 100%; height: 100%;">
+      </div>
+    `
+  class SampleAPICall extends HTMLElement {
+    constructor () {
+      super()
+
+      this._shadowRoot = this.attachShadow({ mode: 'open' })
+      this._shadowRoot.appendChild(bom.content.cloneNode(true))
+
+      this._root = this._shadowRoot.getElementById('root')
+
+      this._props = {}
+
+	  this.APICall()
+
+    }
+
+    onCustomWidgetResize (width, height) {
+      
+	  this.APICall()
+    }
+
+	async APICall (){
+
+		$.ajax({
+			type: 'POST',
+			dataType: 'text',
+			url: 'https://vsystem.ingress.dh-v4q6kgjq.di-us-east.shoot.live.k8s-hana.ondemand.com/app/pipeline-modeler/openapi/service/workiva/v1/trigger',
+			
+			headers: {
+				//"Authorization": "Basic " + btoa('default\GholapRa' + ":" + 'Bonjour01'),
+                "X-Requested-With": "XMLHttpRequest"
+			  },
+			crossDomain: true,
+			async: false,
+			xhrFields: {
+			  withCredentials: true,
+			},
+		  })
+			.done(function (data) {
+			  console.log('done');
+			})
+			.fail(function (xhr, textStatus, errorThrown) {
+			  alert(xhr.responseText);
+			  alert(textStatus);
+			});
+	}
+
+
+  }
+
+  customElements.define('com-sap-sample-apicall', SampleAPICall)
+})()
